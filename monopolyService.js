@@ -22,6 +22,7 @@ router.use(express.json());
 router.get("/", readHelloMessage);
 router.get("/players", readPlayers);
 router.get("/players/:id", readPlayer);
+router.get("/join", readJoin);
 router.put("/players/:id", updatePlayer);
 router.post("/players", createPlayer);
 router.delete("/players/:id", deletePlayer);
@@ -45,6 +46,17 @@ function readHelloMessage(req, res) {
 
 function readPlayers(req, res, next) {
   db.many("SELECT * FROM Player")
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+function readJoin(req, res, next) {
+  db.many(
+    "SELECT gameID, playerID, player.ID, emailAddress  FROM PlayerGame INNER JOIN Player ON playerID = Player.ID"
+  )
     .then((data) => {
       res.send(data);
     })
